@@ -1,37 +1,103 @@
 <template>
   <div class="container">
-    <div>
-      <Logo />
-      <h1 class="title">
-        HayminChat
-      </h1>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
+    <div class="card">
+      <b-form>
+        <b-form-group
+          id="input-group-1"
+          label="Email address"
+          label-for="input-1"
         >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-      </div>
+          <b-form-input
+            id="input-1"
+            v-model="model.email"
+            type="email"
+            placeholder="Enter email"
+            required
+          />
+        </b-form-group>
+
+        <b-form-group id="input-group-2" label="Password:" label-for="input-2">
+          <b-form-input
+            id="input-2"
+            v-model="model.password"
+            maxlenght="20"
+            placeholder="Enter password"
+            required
+          />
+        </b-form-group>
+
+        <b-form-group v-if="registration" id="input-group-3" label="Repeat password" label-for="input-2">
+          <b-form-input
+            id="input-2"
+            v-model="model.repeatPassword"
+            maxlenght="20"
+            placeholder="Repeat password"
+            required
+          />
+        </b-form-group>
+        <div class="btns">
+          <b-button v-if="!registration" variant="primary" @click="changeAction">
+            Registration
+          </b-button>
+          <b-button v-if="registration" variant="primary" @click="changeAction">
+            Authorization
+          </b-button>
+          <b-button v-if="registration" variant="primary" @click="registerUser">
+            Register
+          </b-button>
+          <b-button v-if="!registration" variant="primary">
+            Auth
+          </b-button>
+        </div>
+      </b-form>
     </div>
   </div>
 </template>
 
 <script>
-export default {}
+export default {
+  data () {
+    return {
+      model: {
+        email: '',
+        password: '',
+        repeatPassword: ''
+      },
+      registration: false
+    }
+  },
+  methods: {
+    changeAction () {
+      this.registration = !this.registration
+    },
+    registerUser () {
+      if (this.model.email && this.model.password && this.model.repeatPassword) {
+        if (this.model.password === this.model.repeatPassword) {
+          // eslint-disable-next-line no-unused-vars
+          const model = {
+            email: this.model.email,
+            password: this.model.password
+          }
+          this.$axios.post('/user/api/registration?email=123&password=123')
+        }
+      } else {
+        // eslint-disable-next-line no-console
+        console.log('Notify: complete fields')
+      }
+    }
+  }
+}
 </script>
 
-<style>
+<style scoped lang="scss">
+.btns {
+  display: flex;
+  justify-content: space-between;
+}
+.card {
+  width: 300px;
+  padding: 20px;
+}
 .container {
   margin: 0 auto;
   min-height: 100vh;

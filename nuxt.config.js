@@ -41,7 +41,10 @@ export default {
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
-  axios: {},
+  axios: {
+    // baseURL: 'http://192.168.88.44:3000/api'
+    baseURL: 'http://localhost:4000/'
+  },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
