@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <notifications />
     <div class="card">
       <b-form>
         <b-form-group
@@ -45,7 +46,7 @@
           <b-button v-if="registration" variant="primary" @click="registerUser">
             Register
           </b-button>
-          <b-button v-if="!registration" variant="primary">
+          <b-button v-if="!registration" variant="primary" @click="authUser">
             Auth
           </b-button>
         </div>
@@ -69,6 +70,11 @@ export default {
   methods: {
     changeAction () {
       this.registration = !this.registration
+      this.model = {
+        email: '',
+        password: '',
+        repeatPassword: ''
+      }
     },
     registerUser () {
       if (this.model.email && this.model.password && this.model.repeatPassword) {
@@ -78,7 +84,27 @@ export default {
             email: this.model.email,
             password: this.model.password
           }
-          this.$axios.post('/user/api/registration?email=123&password=123')
+          this.$axios.post('/user/api/registration', model, { headers: { 'Content-Type': 'application/json' }, json: true })
+        }
+      } else {
+        // eslint-disable-next-line no-console
+        console.log('Notify: complete fields')
+      }
+    },
+    async authUser () {
+      if (this.model.email && this.model.password) {
+        const model = {
+          email: this.model.email,
+          password: this.model.password
+        }
+        try {
+          await this.$axios.post('/user/api/authentication', model, { headers: { 'Content-Type': 'application/json' }, json: true })
+        } catch (e) {
+          console.log(e)
+          this.$notify({
+            type: 'warn',
+            text: e.response.result
+          })
         }
       } else {
         // eslint-disable-next-line no-console
