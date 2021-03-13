@@ -76,19 +76,31 @@ export default {
         repeatPassword: ''
       }
     },
-    registerUser () {
+    async registerUser () {
       if (this.model.email && this.model.password && this.model.repeatPassword) {
         if (this.model.password === this.model.repeatPassword) {
-          // eslint-disable-next-line no-unused-vars
-          const model = {
-            email: this.model.email,
-            password: this.model.password
+          try {
+            const model = {
+              email: this.model.email,
+              password: this.model.password
+            }
+            await this.$axios.post('/user/api/registration', model, { headers: { 'Content-Type': 'application/json' }, json: true })
+            this.$notify({
+              type: 'success',
+              text: 'Registration completed'
+            })
+          } catch (e) {
+            this.$notify({
+              type: 'warn',
+              text: e.response.data.result
+            })
           }
-          this.$axios.post('/user/api/registration', model, { headers: { 'Content-Type': 'application/json' }, json: true })
         }
       } else {
-        // eslint-disable-next-line no-console
-        console.log('Notify: complete fields')
+        this.$notify({
+          type: 'warn',
+          text: 'Please complete all fields'
+        })
       }
     },
     async authUser () {
@@ -100,10 +112,9 @@ export default {
         try {
           await this.$axios.post('/user/api/authentication', model, { headers: { 'Content-Type': 'application/json' }, json: true })
         } catch (e) {
-          console.log(e)
           this.$notify({
             type: 'warn',
-            text: e.response.result
+            text: e.response.data.result
           })
         }
       } else {
