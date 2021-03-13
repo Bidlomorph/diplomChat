@@ -56,6 +56,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   data () {
     return {
@@ -67,6 +69,12 @@ export default {
       registration: false
     }
   },
+  computed: {
+    ...mapGetters({
+      user: 'user/user'
+    })
+  },
+  middleware: 'guest',
   methods: {
     changeAction () {
       this.registration = !this.registration
@@ -89,6 +97,12 @@ export default {
               type: 'success',
               text: 'Registration completed'
             })
+            this.registration = !this.registration
+            this.model = {
+              email: '',
+              password: '',
+              repeatPassword: ''
+            }
           } catch (e) {
             this.$notify({
               type: 'warn',
@@ -111,6 +125,8 @@ export default {
         }
         try {
           await this.$axios.post('/user/api/authentication', model, { headers: { 'Content-Type': 'application/json' }, json: true })
+          this.$store.commit('user/setUserData', model)
+          this.$router.push('/chat')
         } catch (e) {
           this.$notify({
             type: 'warn',
